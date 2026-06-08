@@ -1,0 +1,73 @@
+//Fast spiking interneuron for PFC - modified for modulation by psychedelic drugs
+//Based on Durstewitz and Gabriel 2006
+//"Irregular spiking in NMDA-driven prefrontal cortex neurons"
+
+begintemplate INcell
+
+public soma, axon, syn_ampa, syn_nmda, syn_gabaa, syn_gabab
+create soma, axon
+objref syn_ampa, syn_nmda, syn_gabaa, syn_gabab
+
+proc init() {
+
+ps_factor = $1
+
+create soma, axon
+
+soma {
+     nseg=1
+     L=53 
+     diam=42
+
+	insert pas
+	cm=1.2            //microF/cm2
+	g_pas =1/15000   //mho/cm2	
+	e_pas = -70
+	Ra=150
+
+	insert Naf
+     	gnafbar_Naf= 0.045*5 
+
+     	insert kdr
+     	gkdrbar_kdr=0.018 /ps_factor
+
+     	insert IKs	
+     	gKsbar_IKs = 0.000725*0.1 
+
+	// Add synapses to the soma
+	syn_ampa = new ExpSyn(0.5)
+	syn_nmda = new NMDA(0.5)
+	syn_gabaa = new GABAa(0.5)
+	syn_gabab = new GABAb(0.5)
+}
+
+axon {
+	nseg=1
+	L=113.22
+	diam=0.7
+
+	insert pas
+	cm=1.2            //microF/cm2
+	g_pas =1/15000   //mho/cm2
+	e_pas = -70
+	Ra=150
+	
+	insert Naf
+	gnafbar_Naf=0.045*12
+
+	insert kdr
+	gkdrbar_kdr=0.018 /ps_factor
+}
+
+	
+connect axon(0), soma(0.5)	
+
+ko0_k_ion = 3.82   //mM
+ki0_k_ion = 140    //mM
+celsius   = 34
+}
+
+//init()
+
+endtemplate INcell
+
